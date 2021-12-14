@@ -1,2 +1,9 @@
-# metamask-web3-study
-for metamask account sync
+# vue3
+
+> From mj-boilerplate
+
+## Command
+
+```
+npm run serve
+```
