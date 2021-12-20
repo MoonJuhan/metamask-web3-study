@@ -1,10 +1,11 @@
 <template>
   <div class="view-home">
+    <a href="/login">Go Login</a>
     <h1>Now Network : {{ networkName }}</h1>
     <h1 v-if="accountId">Metamask Account ID : {{ accountId }}</h1>
     <h1 v-else>Metamask Account is Not Found</h1>
     <h1>Balance : {{ balance }}</h1>
-    <button @click="onClickConnect">Metamask Login</button>
+    <button @click="onClickConnect">Get Metamask Account</button>
     <button @click="onClickGet">Get Metamask Info</button>
   </div>
 </template>
@@ -40,6 +41,8 @@ export default {
 
     const setNetworkName = async () => {
       const chainId = await ethereum.request({ method: 'eth_chainId' })
+
+      networkName.value = 'unknown Network'
 
       switch (chainId) {
         case '0x1':
