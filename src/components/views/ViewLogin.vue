@@ -2,14 +2,17 @@
   <div class="view-login">
     <h1>Now Network : {{ networkName }}</h1>
     <h2>address : {{ address }}</h2>
+    <h2>message : {{ message }}</h2>
     <h2>signature : {{ signature }}</h2>
     <button @click="onClickLogin">Login</button>
+    <button @click="onClickConnect">Connect</button>
   </div>
 </template>
 
 <script>
 import Web3 from 'web3'
 import { ref, onMounted } from 'vue'
+import axios from 'axios'
 export default {
   setup() {
     const web3 = new Web3(window.ethereum)
@@ -31,19 +34,52 @@ export default {
     }
 
     const address = ref(null)
+    const message = ref(null)
     const signature = ref(null)
 
     const onClickLogin = async () => {
       address.value = null
       signature.value = null
-      const message = ['Test Sign', 'Please sign me in!'].join('\n')
 
       try {
         address.value = (await web3.eth.requestAccounts())[0]
-        signature.value = await web3.eth.personal.sign(message, address.value)
       } catch (error) {
         alert('ERROR')
       }
+    }
+
+    const onClickConnect = async () => {
+      console.log('Connect')
+
+      const { data } = await axios({
+        method: 'post',
+        url: 'https://metamask-back-test.herokuapp.com/users/nonce',
+        data: {
+          publicAdress: address.value,
+        },
+      })
+
+      console.log(data)
+
+      message.value = data.nonce
+
+      try {
+        signature.value = await web3.eth.personal.sign(data.nonce, address.value)
+      } catch (error) {
+        alert('ERROR')
+      }
+
+      const d = await axios({
+        method: 'post',
+        url: 'https://metamask-back-test.herokuapp.com/users/login',
+        data: {
+          publicAdress: address.value,
+          // signature: signature.value,
+          signature: '',
+        },
+      })
+
+      console.log(d)
     }
 
     onMounted(() => {
@@ -53,8 +89,10 @@ export default {
     return {
       networkName,
       address,
+      message,
       signature,
       onClickLogin,
+      onClickConnect,
     }
   },
 }
