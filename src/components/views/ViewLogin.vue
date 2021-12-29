@@ -57,7 +57,7 @@ export default {
           method: 'post',
           url: 'https://metamask-back-test.herokuapp.com/users/nonce',
           data: {
-            publicAdress: address.value,
+            publicAddress: address.value,
           },
         })
 
@@ -83,13 +83,16 @@ export default {
           method: 'post',
           url: 'https://metamask-back-test.herokuapp.com/users/login',
           data: {
-            publicAdress: address.value,
+            publicAddress: address.value,
             signature: signature.value,
-            // signature: '',
           },
         })
 
         console.log(data)
+
+        if (data.token) {
+          alert('Login Success')
+        }
       } else {
         alert('No Nonce')
       }
