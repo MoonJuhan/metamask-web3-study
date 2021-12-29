@@ -2,10 +2,11 @@
   <div class="view-login">
     <h1>Now Network : {{ networkName }}</h1>
     <h2>address : {{ address }}</h2>
-    <h2>message : {{ message }}</h2>
+    <h2>message(nonce) : {{ message }}</h2>
     <h2>signature : {{ signature }}</h2>
+    <button @click="onClickGetAddress">Get Address</button>
+    <button @click="onClickGetNonce">Get Nonce</button>
     <button @click="onClickLogin">Login</button>
-    <button @click="onClickConnect">Connect</button>
   </div>
 </template>
 
@@ -37,7 +38,7 @@ export default {
     const message = ref(null)
     const signature = ref(null)
 
-    const onClickLogin = async () => {
+    const onClickGetAddress = async () => {
       address.value = null
       signature.value = null
 
@@ -48,38 +49,50 @@ export default {
       }
     }
 
-    const onClickConnect = async () => {
-      console.log('Connect')
+    const onClickGetNonce = async () => {
+      if (address.value) {
+        message.value = null
 
-      const { data } = await axios({
-        method: 'post',
-        url: 'https://metamask-back-test.herokuapp.com/users/nonce',
-        data: {
-          publicAdress: address.value,
-        },
-      })
+        const { data } = await axios({
+          method: 'post',
+          url: 'https://metamask-back-test.herokuapp.com/users/nonce',
+          data: {
+            publicAdress: address.value,
+          },
+        })
 
-      console.log(data)
+        console.log(data)
 
-      message.value = data.nonce
-
-      try {
-        signature.value = await web3.eth.personal.sign(data.nonce, address.value)
-      } catch (error) {
-        alert('ERROR')
+        message.value = data.nonce
+      } else {
+        alert('No Address')
       }
+    }
 
-      const d = await axios({
-        method: 'post',
-        url: 'https://metamask-back-test.herokuapp.com/users/login',
-        data: {
-          publicAdress: address.value,
-          // signature: signature.value,
-          signature: '',
-        },
-      })
+    const onClickLogin = async () => {
+      if (message.value) {
+        signature.value = null
 
-      console.log(d)
+        try {
+          signature.value = await web3.eth.personal.sign(message.value, address.value)
+        } catch (error) {
+          alert('ERROR')
+        }
+
+        const { data } = await axios({
+          method: 'post',
+          url: 'https://metamask-back-test.herokuapp.com/users/login',
+          data: {
+            publicAdress: address.value,
+            signature: signature.value,
+            // signature: '',
+          },
+        })
+
+        console.log(data)
+      } else {
+        alert('No Nonce')
+      }
     }
 
     onMounted(() => {
@@ -91,9 +104,17 @@ export default {
       address,
       message,
       signature,
+      onClickGetAddress,
+      onClickGetNonce,
       onClickLogin,
-      onClickConnect,
     }
   },
 }
 </script>
+
+<style lang="scss" scoped>
+button {
+  font-size: 20px;
+  margin: 0 20px 0 0;
+}
+</style>
