@@ -11,6 +11,10 @@ const routesBasic = [
     path: '/transaction',
     component: () => import(/* webpackChunkName: 'view-transaction' */ '../components/views/ViewTransaction.vue'),
   },
+  {
+    path: '/transfer',
+    component: () => import(/* webpackChunkName: 'view-transfer' */ '../components/views/ViewTransfer.vue'),
+  },
 ]
 
 const routesAsync = [...routesBasic].map((o) => o)
