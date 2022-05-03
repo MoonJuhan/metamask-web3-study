@@ -65,6 +65,7 @@ export default {
     const onClickDisconnect = () => {
       connector.value.killSession()
       walletInfo.value = null
+      signature.value = null
     }
 
     const onClickSign = () => {
