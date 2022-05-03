@@ -2,8 +2,12 @@
   <div class="view-wc">
     <h1 v-if="walletInfo">Account : {{ walletInfo.accounts[0] }}</h1>
     <h1 v-if="walletInfo">Chain Id : {{ walletInfo.chainId }}</h1>
+    <h2 v-if="signature">Signature : {{ signature }}</h2>
     <button @click="onClickConnect()">Connect</button>
-    <button @click="onClickDisconnect()">Disconnect</button>
+
+    <button @click="onClickSign()" :disabled="!walletInfo">Sign</button>
+
+    <button @click="onClickDisconnect()" :disabled="!walletInfo">Disconnect</button>
   </div>
 </template>
 
@@ -16,6 +20,7 @@ export default {
   setup() {
     const walletInfo = ref(null)
     const connector = ref(null)
+    const signature = ref(null)
 
     const onClickConnect = () => {
       connector.value = new WalletConnect({
@@ -62,30 +67,33 @@ export default {
       walletInfo.value = null
     }
 
-    // const onClickSign = () => {
-    //   const msgParams = [
-    //     '123', // Required
-    //     '0xc5B71dcC0aB972d7734D8f31e12Fed57c6628c7B', // Required
-    //   ]
+    const onClickSign = () => {
+      const msgParams = [
+        'Hello World', // Required
+        walletInfo.value.accounts[0],
+      ]
 
-    //   // Sign personal message
-    //   connector
-    //     .signPersonalMessage(msgParams)
-    //     .then((result) => {
-    //       // Returns signature.
-    //       console.log(result)
-    //     })
-    //     .catch((error) => {
-    //       // Error returned when rejected
-    //       console.error(error)
-    //     })
-    // }
+      // Sign personal message
+      connector.value
+        .signPersonalMessage(msgParams)
+        .then((result) => {
+          // Returns signature.
+          signature.value = result
+          console.log(result)
+        })
+        .catch((error) => {
+          // Error returned when rejected
+          console.error(error)
+        })
+    }
 
     onMounted(() => {})
 
     return {
       walletInfo,
+      signature,
       onClickConnect,
+      onClickSign,
       onClickDisconnect,
     }
   },
@@ -97,5 +105,9 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+
+  button {
+    margin-bottom: 10px;
+  }
 }
 </style>
