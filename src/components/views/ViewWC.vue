@@ -99,6 +99,39 @@ export default {
 
     const onClickDirect = () => {
       if (connector.value) {
+        if (!connector.value.connected) {
+          connector.value.createSession()
+        }
+
+        connector.value.on('connect', (error, payload) => {
+          console.log('connect')
+          if (error) {
+            throw error
+          }
+
+          // Get provided accounts and chainId
+          const { accounts, chainId } = payload.params[0]
+          walletInfo.value = { accounts, chainId }
+        })
+
+        connector.value.on('session_update', (error, payload) => {
+          console.log('session_update')
+          if (error) {
+            throw error
+          }
+
+          // Get updated accounts and chainId
+          const { accounts, chainId } = payload.params[0]
+          console.log(accounts, chainId)
+        })
+
+        connector.value.on('disconnect', (error, payload) => {
+          console.log('disconnect')
+          if (error) {
+            throw error
+          }
+        })
+
         window.open(`https://metamask.app.link/wc?uri=${connector.value.uri}`)
       }
     }
