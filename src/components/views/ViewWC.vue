@@ -7,7 +7,9 @@
 
     <button @click="onClickSign()" :disabled="!walletInfo">Sign</button>
 
-    <button @click="onClickDisconnect()" :disabled="!walletInfo">Disconnect</button>
+    <button @click="onClickDisconnect()">Disconnect</button>
+
+    <button @click="onClickDirect()">Metamask Direct Connect</button>
   </div>
 </template>
 
@@ -15,9 +17,12 @@
 import { onMounted, ref } from 'vue'
 import WalletConnect from '@walletconnect/client'
 import QRCodeModal from '@walletconnect/qrcode-modal'
+import { useRouter } from 'vue-router'
 
 export default {
   setup() {
+    const router = useRouter()
+
     const walletInfo = ref(null)
     const connector = ref(null)
     const signature = ref(null)
@@ -27,6 +32,8 @@ export default {
         bridge: 'https://bridge.walletconnect.org', // Required
         qrcodeModal: QRCodeModal,
       })
+
+      console.log(connector.value)
 
       if (!connector.value.connected) {
         connector.value.createSession()
@@ -90,12 +97,19 @@ export default {
 
     onMounted(() => {})
 
+    const onClickDirect = () => {
+      if (connector.value) {
+        window.open(`https://metamask.app.link/wc?uri=${connector.value.uri}`)
+      }
+    }
+
     return {
       walletInfo,
       signature,
       onClickConnect,
       onClickSign,
       onClickDisconnect,
+      onClickDirect,
     }
   },
 }
