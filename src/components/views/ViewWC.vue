@@ -148,7 +148,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .view-wc {
   display: flex;
   flex-direction: column;
@@ -156,6 +156,49 @@ export default {
 
   button {
     margin-bottom: 10px;
+  }
+}
+
+#walletconnect-wrapper {
+  .walletconnect-modal__mobile__toggle {
+    display: none;
+  }
+
+  .walletconnect-qrcode__text {
+    display: none;
+  }
+
+  .walletconnect-search__input {
+    display: none;
+  }
+
+  .walletconnect-modal__footer {
+    display: none;
+  }
+
+  .walletconnect-connect__buttons__wrapper__wrap {
+    grid-template-columns: repeat(1, 1fr);
+    row-gap: 10px;
+
+    .walletconnect-connect__button__icon_anchor {
+      width: 100%;
+      margin: 0;
+      flex-direction: row;
+      display: none;
+
+      &[href*='metamask'] {
+        display: flex;
+      }
+
+      .walletconnect-connect__button__icon {
+        margin-right: 10px;
+      }
+
+      .walletconnect-connect__button__text {
+        margin: 0;
+        font-size: 20px;
+      }
+    }
   }
 }
 </style>
